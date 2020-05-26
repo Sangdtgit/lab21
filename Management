@@ -1,0 +1,239 @@
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Scanner;
+import javax.rmi.CORBA.Stub;
+
+/**
+ *
+ * @author nds72
+ */
+public class Management {
+
+    static Scanner sc = new Scanner(System.in);
+
+    ArrayList<Student> list = new ArrayList<Student>();
+
+    public String checkInputString() {
+        while (true) {
+            String result = sc.nextLine();
+            if (result.isEmpty()) {
+                System.out.println("Please enter again!");
+            } else {
+                return result;
+            }
+        }
+    }
+
+    public boolean checkYN() {
+        while (true) {
+            String result = checkInputString();
+            if (result.equalsIgnoreCase("Y")) {
+                return true;
+            }
+            if (result.equalsIgnoreCase("N")) {
+                return false;
+            }
+            System.out.println("Please enter again(Y/N)");
+        }
+    }
+
+    public String checkCourse() {
+        while (true) {
+            String course = checkInputString().toUpperCase();
+            if (course.equalsIgnoreCase("java") || course.equalsIgnoreCase(".Net") || course.equalsIgnoreCase("c/c++")) {
+                return course;
+            } else {
+                System.out.println("only three courses: Java|.Net|C/C++).");
+                System.out.println("Please enter again");
+            }
+        }
+    }
+
+    public boolean checkFS() {
+        while (true) {
+            String result = checkInputString();
+            if (result.equalsIgnoreCase("F")) {
+                return true;
+            }
+            if (result.equalsIgnoreCase("S")) {
+                return false;
+            }
+            System.out.println("Please choose Find Or Sort(F/N)");
+        }
+    }
+
+    public boolean checkUD() {
+        while (true) {
+            String result = checkInputString();
+            if (result.equalsIgnoreCase("U")) {
+                return true;
+            }
+            if (result.equalsIgnoreCase("D")) {
+                return false;
+            }
+            System.out.println("please choose Update or False(U/D)");
+        }
+    }
+
+    /* public String checkId() {
+     String result;
+     do {
+     System.out.println("Enter Id");
+     result = checkInputString().toUpperCase();
+     for (Student s : list) {
+     if (s.getId().equalsIgnoreCase(result)) {
+     System.out.printf("Id of student has been exists\n");
+
+     result = null;
+     }
+     }
+     } while (result == null);
+     return result;
+     }*/
+    public void create() {
+        int count = 1;
+        boolean check = true;
+        if (list.size() >= count) {
+            System.out.println("Do you want to continue (Y/N)?");
+            check = checkYN();
+        }
+
+        if (check == true) {
+            System.out.println("Enter Id");
+            String id = checkInputString().toUpperCase();// checkId();
+            System.out.println("Enter Student Name");
+            String name = checkInputString().toUpperCase();
+            System.out.println("Enter Semester");
+            String semester = checkInputString().toUpperCase();
+            System.out.println("Enter CourseName");
+            String course = checkCourse();
+            Student s = new Student(id, name, semester, course);
+            list.add(s);
+        }
+    }
+
+    public void findByName() {
+        System.out.println("Enter your Name");
+        String name = checkInputString().toUpperCase();
+        for (Student s : list) {
+            if ((s.getStudentName().contains(name)) || (s.getStudentName().equalsIgnoreCase(name))) {
+                s.show();
+            } else {
+                System.out.println("Name not exits");
+            }
+        }
+    }
+
+    public void SortByName() {
+        Collections.sort(list);
+        System.out.println("Number of element " + list.size());
+        for (Student s : list) {
+            s.show();
+        }
+    }
+
+    public void findAndSort() {
+        System.out.println("Enter your choice to Find or Sort(F/S)");
+        boolean choose = checkFS();
+        if (choose == true) {
+            findByName();
+        } else if (choose == false) {
+            SortByName();
+        } else {
+            System.out.println("Please enter F/S (Find or Sort)");
+        }
+    }
+
+    public Student findById() {
+        System.out.println("Enter id to find");
+        String findId = sc.nextLine();
+        for (Student s : list) {
+            if (s.getId().equalsIgnoreCase(findId)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public void Update(Student s) {
+
+        String newId;
+        String newName;
+        String newSemester;
+        String newCourseName;
+        System.out.println("Enter newId");
+        newId = checkInputString();
+        System.out.println("Enter newName");
+        newName = checkInputString();
+        System.out.println("Enter newSemester course");
+        newSemester = checkInputString();
+        System.out.println("Enter newCourseName");
+        newCourseName = checkCourse();
+
+        for (int i = 0; i < list.size(); i++) {
+            s.setId(newId);
+            s.setStudentName(newName);
+            s.setSemester(newSemester);
+            s.setCourseName(newCourseName);
+        }
+    }
+
+    public void delete(Student s) {
+
+        list.remove(s);
+    }
+
+    public void UpdateAndDelete() {
+        Student s = findById();
+        if (s != null) {
+            System.out.println("Enter your choice to Update or Delete(U/D)");
+            boolean choose = checkUD();
+            if (choose == true) {
+                Update(s);
+            } else if (choose == false) {
+                delete(s);
+            }
+        } else {
+            System.out.println("Id not exists");
+        }
+
+    }
+
+
+    class studentReport {
+
+        String name;
+        String course;
+        int count;
+
+        public studentReport(String name, String course, int count) {
+            this.name = name;
+            this.course = course;
+            this.count = count;
+        }
+
+    }
+
+    public void report() {
+        ArrayList<studentReport> arr = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            boolean found = false;
+            for (int k = 0; k < arr.size(); k++) {
+                if (arr.get(k).name.contentEquals(list.get(i).studentName)
+                        && arr.get(k).course.contentEquals(list.get(i).courseName)) {
+                    arr.get(k).count++;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                arr.add(new studentReport(list.get(i).getStudentName(), list.get(i).getCourseName(), 1));
+                /////
+            }
+        }
+        for (studentReport s : arr) {
+            System.out.println(s.name + " " + s.course + " " + s.count);
+        }
+    }
+}
