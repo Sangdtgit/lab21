@@ -1,0 +1,40 @@
+public class Program {
+
+    static Scanner sc = new Scanner(System.in);
+
+    public static void showMenu() {
+        System.out.println("1.Create");
+        System.out.println("2.Find and sort");
+        System.out.println("3.Update/Delete");
+        System.out.println("4.Report");
+        System.out.println("5.Exit");
+        System.out.println("Please choice \r");
+    }
+
+    public static void main(String[] args) {
+        Management m = new Management();
+        int choie;
+        do {
+            showMenu();
+            choie = sc.nextInt();
+            switch (choie) {
+                case 1:
+                    m.create();
+                    break;
+                case 2:
+                    m.findAndSort();
+                    break;
+                case 3:
+                    m.UpdateAndDelete();
+                    break;
+                case 4:
+                    m.report();
+                case 5:
+                    break;
+            }
+
+        } while (choie != 5);
+
+    }
+
+}
